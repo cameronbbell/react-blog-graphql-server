@@ -1,6 +1,7 @@
 console.log({ starting: true });
 
 import express from "express";
+import basicAuth from "basic-auth-connect";
 import graphqlHTTP from "express-graphql";
 import {
   GraphQLSchema,
@@ -9,12 +10,7 @@ import {
   GraphQLNonNull,
   GraphQLID
 } from "graphql";
-import {
-  NodeInterface,
-  UserType,
-  PostType,
-  CommentType
-} from "./src/types";
+import { NodeInterface, UserType, PostType, CommentType } from "./src/types";
 
 import * as loaders from "./src/loaders";
 
@@ -22,17 +18,12 @@ const app = express();
 
 const RootQuery = new GraphQLObjectType({
   name: "RootQuery",
-  description: "Thre root query",
+  description: "The root query",
   fields: {
-    node: {
+    viewer: {
       type: NodeInterface,
-      args: {
-        id: {
-          type: new GraphQLNonNull(GraphQLID)
-        }
-      },
-      resolve(source, args) {
-        return loaders.getNodeById(args.id);
+      resolve(source, args, context) {
+        return loaders.getNodeById(context);
       }
     }
   }
@@ -67,7 +58,19 @@ const Schema = new GraphQLSchema({
   mutation: RootMutation
 });
 
-app.use("/graphql", graphqlHTTP({ schema: Schema, graphiql: true }));
+app.use(
+  basicAuth(function(user, pass) {
+    return pass === "mypassword1";
+  })
+);
+
+app.use(
+  "/graphql",
+  graphqlHTTP(req => {
+    const context = "users:" + req.user;
+    return { schema: Schema, graphiql: true, context: context, pretty: true };
+  })
+);
 
 app.listen(3001, () => {
   console.log({ running: true });

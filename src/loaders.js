@@ -33,7 +33,7 @@ export const getCommentsForPost = postSource => {
   });
 };
 
-export const getPostIdsForUser = (userSource, args) => {
+export const getPostIdsForUser = (userSource, args, context) => {
   let { after, first } = args;
   if (!first) {
     first = 2;
@@ -44,7 +44,7 @@ export const getPostIdsForUser = (userSource, args) => {
     .select(table.id, table.created_at)
     .where(table.posted_by_user_id.equals(userSource.id))
     .order(table.created_at.asc)
-    .limit(first + 1);
+    .limit(first + 2);
 
   if (after) {
     const [id, created_at] = after.split(":");
