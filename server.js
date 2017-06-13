@@ -25,6 +25,17 @@ const RootQuery = new GraphQLObjectType({
       resolve(source, args, context) {
         return loaders.getNodeById(context);
       }
+    },
+    node: {
+      type: NodeInterface,
+      args: {
+        id: {
+          type: new GraphQLNonNull(GraphQLID)
+        }
+      },
+      resolve(source, args, context) {
+        return loaders.getNodeById(args.id);
+      }
     }
   }
 });
