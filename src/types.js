@@ -8,6 +8,7 @@ import {
   GraphQLBoolean,
   GraphQLInt
 } from "graphql";
+import { connectionDefinitions } from "graphql-relay";
 import * as loaders from "./loaders";
 import * as tables from "./tables";
 
@@ -151,46 +152,6 @@ export const CommentType = new GraphQLObjectType({
   }
 });
 
-const PageInfoType = new GraphQLObjectType({
-  name: "PageInfo",
-  fields: {
-    hasNextPage: {
-      type: new GraphQLNonNull(GraphQLBoolean)
-    },
-    hasPreviousPage: {
-      type: new GraphQLNonNull(GraphQLBoolean)
-    },
-    startCursor: {
-      type: GraphQLString
-    },
-    endCursor: {
-      type: GraphQLString
-    }
-  }
-});
-
-const PostEdgeType = new GraphQLObjectType({
-  name: "PostEdge",
-  fields: () => {
-    return {
-      cursor: {
-        type: new GraphQLNonNull(GraphQLString)
-      },
-      node: {
-        type: new GraphQLNonNull(PostType)
-      }
-    };
-  }
-});
-
-const PostsConnectionType = new GraphQLObjectType({
-  name: "PostsConnection",
-  fields: {
-    pageInfo: {
-      type: new GraphQLNonNull(PageInfoType)
-    },
-    edges: {
-      type: new GraphQLList(PostEdgeType)
-    }
-  }
+const { connectionType: PostsConnectionType } = connectionDefinitions({
+  nodeType: PostType
 });
