@@ -75,3 +75,25 @@ export const getPostIdsForUser = (userSource, args, context) => {
     return { rows, pageInfo };
   });
 };
+
+export const createPost = (title, body, context) => {
+  const { dbId } = tables.splitNodeId(context);
+  const created_at = new Date().toISOString().split("T")[0];
+  const posts = [
+    {
+      posted_by_user_id: dbId,
+      created_at,
+      title,
+      body,
+      timestamp: created_at,
+      last_modified_by_user_id: dbId
+    }
+  ];
+
+  let query = tables.posts.insert(posts).toQuery();
+  return database.getSql(query).then(() => {
+    return database.getSql({ text: "SELECT last_insert_rowid() AS id FROM posts"});
+  }).then((ids) => {
+    return tables.dbIdToNodeId(ids[0].id, tables.posts.getName());
+  });
+};

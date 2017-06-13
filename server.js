@@ -34,19 +34,22 @@ const RootMutation = new GraphQLObjectType({
   name: "RootMutation",
   description: "The root mutation",
   fields: {
-    setNode: {
-      type: GraphQLString,
+    createPost: {
+      type: PostType,
       args: {
-        id: {
-          type: new GraphQLNonNull(GraphQLID)
+        body: {
+          type: new GraphQLNonNull(GraphQLString)
         },
-        value: {
+        title: {
           type: new GraphQLNonNull(GraphQLString)
         }
       },
-      resolve(source, args) {
-        inMemoryStore[args.key] = args.value;
-        return inMemoryStore[args.key];
+      resolve(source, args, context) {
+        return loaders
+          .createPost(args.title, args.body, context)
+          .then(nodeId => {
+            return loaders.getNodeById(nodeId);
+          });
       }
     }
   }
