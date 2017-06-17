@@ -117,8 +117,8 @@ export const PostType = new GraphQLObjectType({
           after: {
             type: GraphQLString
           },
-          before: {
-            type: GraphQLString
+          first: {
+            type: GraphQLInt
           }
         },
         resolve(source, args, context) {
@@ -153,7 +153,7 @@ export const PostType = new GraphQLObjectType({
 });
 
 export const CommentType = new GraphQLObjectType({
-  name: "Comment",
+  name: "Comments",
   interfaces: [NodeInterface],
   fields: () => {
     return {
