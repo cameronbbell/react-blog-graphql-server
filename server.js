@@ -1,7 +1,6 @@
 console.log({ starting: true });
 
 import express from "express";
-import basicAuth from "basic-auth-connect";
 import graphqlHTTP from "express-graphql";
 import {
   GraphQLSchema,
@@ -40,7 +39,6 @@ const RootQuery = new GraphQLObjectType({
   }
 });
 
-let inMemoryStore = {};
 const RootMutation = new GraphQLObjectType({
   name: "RootMutation",
   description: "The root mutation",
@@ -73,15 +71,9 @@ const Schema = new GraphQLSchema({
 });
 
 app.use(
-  basicAuth(function(user, pass) {
-    return pass === "mypassword1";
-  })
-);
-
-app.use(
   "/graphql",
-  graphqlHTTP(req => {
-    const context = "users:" + req.user;
+  graphqlHTTP(() => {
+    const context = "users:1";
     return { schema: Schema, graphiql: true, context: context, pretty: true };
   })
 );
