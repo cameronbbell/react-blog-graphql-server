@@ -112,15 +112,40 @@ export const PostType = new GraphQLObjectType({
         type: new GraphQLNonNull(GraphQLString)
       },
       comments: {
-        type: new GraphQLList(CommentType),
-        resolve(source) {
-          return loaders.getCommentsForPost(source).then(rows => {
-            const promises = rows.map(row => {
-              const commentNodeId = tables.dbIdToNodeId(row.id, "comments");
-              return loaders.getNodeById(commentNodeId);
+        type: CommentsConnectionType,
+        args: {
+          after: {
+            type: GraphQLString
+          },
+          before: {
+            type: GraphQLString
+          }
+        },
+        resolve(source, args, context) {
+          return loaders
+            .getCommentIdsForPost(source, args, context)
+            .then(({ rows, pageInfo }) => {
+              const promises = rows.map(row => {
+                const commentNodeId = tables.dbIdToNodeId(
+                  row.id,
+                  row.__tableName
+                );
+                return loaders.getNodeById(commentNodeId).then(node => {
+                  const edge = {
+                    node,
+                    cursor: row.__cursor
+                  };
+                  return edge;
+                });
+              });
+
+              return Promise.all(promises).then(edges => {
+                return {
+                  edges,
+                  pageInfo
+                };
+              });
             });
-            return Promise.all(promises);
-          });
         }
       }
     };
@@ -154,4 +179,8 @@ export const CommentType = new GraphQLObjectType({
 
 const { connectionType: PostsConnectionType } = connectionDefinitions({
   nodeType: PostType
+});
+
+const { connectionType: CommentsConnectionType } = connectionDefinitions({
+  nodeType: CommentType
 });
