@@ -177,10 +177,10 @@ export const CommentType = new GraphQLObjectType({
   }
 });
 
-const { connectionType: PostsConnectionType } = connectionDefinitions({
+export const { connectionType: PostsConnectionType } = connectionDefinitions({
   nodeType: PostType
 });
 
-const { connectionType: CommentsConnectionType } = connectionDefinitions({
+export const { connectionType: CommentsConnectionType } = connectionDefinitions({
   nodeType: CommentType
 });

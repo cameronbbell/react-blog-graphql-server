@@ -7,35 +7,79 @@ import {
   GraphQLObjectType,
   GraphQLString,
   GraphQLNonNull,
-  GraphQLID
+  GraphQLID,
+  GraphQLInt
 } from "graphql";
-import { NodeInterface, UserType, PostType, CommentType } from "./src/types";
+import {
+  NodeInterface,
+  UserType,
+  PostType,
+  CommentType,
+  PostsConnectionType
+} from "./src/types";
 
 import * as loaders from "./src/loaders";
+import * as tables from "./src/tables";
 
 const app = express();
 
 const RootQuery = new GraphQLObjectType({
   name: "RootQuery",
   description: "The root query",
-  fields: {
-    viewer: {
-      type: NodeInterface,
-      resolve(source, args, context) {
-        return loaders.getNodeById(context);
-      }
-    },
-    node: {
-      type: NodeInterface,
-      args: {
-        id: {
-          type: new GraphQLNonNull(GraphQLID)
+  fields: () => {
+    return {
+      viewer: {
+        type: NodeInterface,
+        resolve(source, args, context) {
+          return loaders.getNodeById(context);
         }
       },
-      resolve(source, args, context) {
-        return loaders.getNodeById(args.id);
+      node: {
+        type: NodeInterface,
+        args: {
+          id: {
+            type: new GraphQLNonNull(GraphQLID)
+          }
+        },
+        resolve(source, args, context) {
+          return loaders.getNodeById(args.id);
+        }
+      },
+      posts: {
+        type: PostsConnectionType,
+        args: {
+          after: {
+            type: GraphQLString
+          },
+          first: {
+            type: GraphQLInt
+          }
+        },
+        resolve(source, args, context) {
+          return loaders
+            .getPostIds(source, args, context)
+            .then(({ rows, pageInfo }) => {
+              const promises = rows.map(row => {
+                const postNodeId = tables.dbIdToNodeId(row.id, row.__tableName);
+                return loaders.getNodeById(postNodeId).then(node => {
+                  const edge = {
+                    node,
+                    cursor: row.__cursor
+                  };
+                  return edge;
+                });
+              });
+
+              return Promise.all(promises).then(edges => {
+                return {
+                  edges,
+                  pageInfo
+                };
+              });
+            });
+        }
       }
-    }
+    };
   }
 });
 
