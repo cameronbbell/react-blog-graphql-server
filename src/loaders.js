@@ -110,8 +110,8 @@ export const getPostIds = (source, args, context) => {
       row.__cursor = row.id + ":" + row.created_at;
     });
 
-    const hasNextPage = allRows.length > first;
-    const hasPreviousPage = false;
+    const hasNextPage = false;
+    const hasPreviousPage = allRows.length > first;
 
     const pageInfo = {
       hasNextPage: hasNextPage,
@@ -124,6 +124,26 @@ export const getPostIds = (source, args, context) => {
     }
 
     return { rows, pageInfo };
+  });
+};
+
+export const getPosts = (rows, pageInfo) => {
+  const promises = rows.map(row => {
+    const postNodeId = tables.dbIdToNodeId(row.id, row.__tableName);
+    return getNodeById(postNodeId).then(node => {
+      const edge = {
+        node,
+        cursor: row.__cursor
+      };
+      return edge;
+    });
+  });
+
+  return Promise.all(promises).then(edges => {
+    return {
+      edges,
+      pageInfo
+    };
   });
 };
 

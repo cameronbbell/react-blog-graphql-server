@@ -19,7 +19,6 @@ import {
 } from "./src/types";
 
 import * as loaders from "./src/loaders";
-import * as tables from "./src/tables";
 
 const app = express();
 
@@ -59,23 +58,7 @@ const RootQuery = new GraphQLObjectType({
           return loaders
             .getPostIds(source, args, context)
             .then(({ rows, pageInfo }) => {
-              const promises = rows.map(row => {
-                const postNodeId = tables.dbIdToNodeId(row.id, row.__tableName);
-                return loaders.getNodeById(postNodeId).then(node => {
-                  const edge = {
-                    node,
-                    cursor: row.__cursor
-                  };
-                  return edge;
-                });
-              });
-
-              return Promise.all(promises).then(edges => {
-                return {
-                  edges,
-                  pageInfo
-                };
-              });
+              return loaders.getPosts(rows, pageInfo);
             });
         }
       }
