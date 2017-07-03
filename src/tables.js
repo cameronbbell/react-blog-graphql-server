@@ -46,6 +46,10 @@ export const posts = sql.define({
       dataType: "text"
     },
     {
+      name: "link_text",
+      dataType: "text"
+    },
+    {
       name: "timestamp",
       dataType: "datetime"
     },

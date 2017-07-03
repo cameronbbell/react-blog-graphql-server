@@ -111,6 +111,9 @@ export const PostType = new GraphQLObjectType({
       body: {
         type: new GraphQLNonNull(GraphQLString)
       },
+      link_text: {
+        type: new GraphQLNonNull(GraphQLString)
+      },
       comments: {
         type: CommentsConnectionType,
         args: {

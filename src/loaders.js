@@ -86,21 +86,24 @@ export const getPostIdsForUser = (userSource, args, context) => {
 };
 
 export const getPostIds = (source, args, context) => {
-  let { after, first } = args;
+  let { after, first, linkText } = args;
   if (!first) {
     first = 1;
   }
 
   const table = tables.posts;
-  let query = table
-    .select(table.id, table.created_at)
-    .order(table.created_at.desc)
-    .limit(first + 2);
+  let query = table.select(table.id, table.created_at);
 
   if (after) {
     const [id, created_at] = after.split(":");
-    query = query.where(table.created_at.gt(after)).where(table.id.gt(id));
+    query = query.where(table.created_at.gt(created_at)).where(table.id.gt(id));
   }
+
+  if (linkText) {
+    query = query.where(table.link_text.equals(linkText));
+  }
+
+  query.order(table.created_at.desc).limit(first + 2);
 
   return database.getSql(query.toQuery()).then(allRows => {
     const rows = allRows.slice(0, first);

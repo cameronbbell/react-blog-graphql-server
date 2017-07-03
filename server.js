@@ -52,6 +52,9 @@ const RootQuery = new GraphQLObjectType({
           },
           first: {
             type: GraphQLInt
+          },
+          linkText: {
+            type: GraphQLString
           }
         },
         resolve(source, args, context) {

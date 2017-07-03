@@ -20,10 +20,11 @@
     {
       "id": 1,
       "posted_by_user_id": 1,
-      "created_at": "2015-03-25T12:00:00Z",
+      "created_at": "2015-03-25",
       "title": "Hello World",
       "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-      "timestamp": "2015-03-25T12:00:00Z",
+      "link_text": "hello-world",
+      "timestamp": "2015-03-25",
       "last_modified_by_user_id": 1
     }
   ],
@@ -32,18 +33,18 @@
       "id": 1,
       "post_id": 1,
       "posted_by_user_id": 2,
-      "created_at": "2015-03-25T13:50:00Z",
+      "created_at": "2015-03-25",
       "body": "First post!!!!1",
-      "timestamp":"2015-03-25T13:50:00Z",
+      "timestamp":"2015-03-25",
       "last_modified_by_user_id": 2
     },
     {
       "id": 2,
       "post_id": 1,
       "posted_by_user_id": 3,
-      "created_at": "2015-03-25T13:55:00Z",
+      "created_at": "2015-03-25",
       "body": "lol",
-      "timestamp": "2015-03-25T13:55:00Z",
+      "timestamp": "2015-03-25",
       "last_modified_by_user_id": 3
     }
   ]
