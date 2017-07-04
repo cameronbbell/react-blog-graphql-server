@@ -143,6 +143,12 @@ export const getPosts = (rows, pageInfo) => {
   });
 
   return Promise.all(promises).then(edges => {
+    // post edges should be sorted descending by date so that the most recent
+    // posts are returned first
+    edges.sort((a, b) => {
+      return new Date(b.node.created_at) - new Date(a.node.created_at);
+    });
+
     return {
       edges,
       pageInfo
