@@ -105,6 +105,13 @@ export const PostType = new GraphQLObjectType({
       posted_by_user_id: {
         type: new GraphQLNonNull(GraphQLInt)
       },
+      posted_by_user: {
+        type: new GraphQLNonNull(UserType),
+        resolve(source) {
+          return loaders
+            .getNodeById("users:" + source.posted_by_user_id);
+        }
+      },
       title: {
         type: new GraphQLNonNull(GraphQLString)
       },
