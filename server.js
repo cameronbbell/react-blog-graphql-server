@@ -53,6 +53,9 @@ const RootQuery = new GraphQLObjectType({
           first: {
             type: GraphQLInt
           },
+          offset: {
+            type: GraphQLInt
+          },
           linkText: {
             type: GraphQLString
           }

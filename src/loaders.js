@@ -95,7 +95,8 @@ export const getPostIdsForUser = (userSource, args, context) => {
 };
 
 export const getPostIds = (source, args, context) => {
-  let { after, first, linkText } = args;
+  let { first } = args;
+  const { after, linkText, offset } = args;
   if (!first) {
     first = 1;
   }
@@ -112,7 +113,11 @@ export const getPostIds = (source, args, context) => {
     query = query.where(table.link_text.equals(linkText));
   }
 
-  query.order(table.created_at.desc).limit(first + 2);
+  query.order(table.created_at.desc).limit(first);
+
+  if (offset) {
+    query.offset(offset);
+  }
 
   return database.getSql(query.toQuery()).then(allRows => {
     const rows = allRows.slice(0, first);
@@ -135,9 +140,7 @@ export const getPostIds = (source, args, context) => {
       pageInfo.endCursor = rows[rows.length - 1].__cursor;
     }
 
-    const count = 11;
-
-    return { count, rows, pageInfo };
+    return { rows, pageInfo };
   });
 };
 
