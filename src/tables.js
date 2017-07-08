@@ -103,3 +103,16 @@ export const splitNodeId = nodeId => {
   const [tableName, dbId] = nodeId.split(":");
   return { tableName, dbId };
 };
+
+export const tableLookup = tableName => {
+  switch (tableName) {
+    case "users":
+      return users;
+    case "posts":
+      return posts;
+    case "comments":
+      return comments;
+    default:
+      return null;
+  }
+};

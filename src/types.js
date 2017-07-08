@@ -108,8 +108,7 @@ export const PostType = new GraphQLObjectType({
       posted_by_user: {
         type: new GraphQLNonNull(UserType),
         resolve(source) {
-          return loaders
-            .getNodeById("users:" + source.posted_by_user_id);
+          return loaders.getNodeById("users:" + source.posted_by_user_id);
         }
       },
       title: {
@@ -134,7 +133,7 @@ export const PostType = new GraphQLObjectType({
         resolve(source, args, context) {
           return loaders
             .getCommentIdsForPost(source, args, context)
-            .then(({ rows, pageInfo }) => {
+            .then(({ count, rows, pageInfo }) => {
               const promises = rows.map(row => {
                 const commentNodeId = tables.dbIdToNodeId(
                   row.id,
@@ -149,8 +148,11 @@ export const PostType = new GraphQLObjectType({
                 });
               });
 
+              console.log(count);
+
               return Promise.all(promises).then(edges => {
                 return {
+                  count,
                   edges,
                   pageInfo
                 };
@@ -188,9 +190,20 @@ export const CommentType = new GraphQLObjectType({
 });
 
 export const { connectionType: PostsConnectionType } = connectionDefinitions({
-  nodeType: PostType
+  nodeType: PostType,
+  connectionFields: () => ({
+    count: {
+      type: GraphQLInt,
+      description: "The total count of posts in the database.",
+      resolve: () => {
+        return loaders.getTableCount("posts");
+      }
+    }
+  })
 });
 
-export const { connectionType: CommentsConnectionType } = connectionDefinitions({
+export const {
+  connectionType: CommentsConnectionType
+} = connectionDefinitions({
   nodeType: CommentType
 });

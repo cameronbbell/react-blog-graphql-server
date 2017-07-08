@@ -22,6 +22,15 @@ const nodeLoaders = {
   comments: createNodeLoader(tables.comments)
 };
 
+export const getTableCount = tableName => {
+  const table = tables.tableLookup(tableName);
+  const query = table.select(table.id.count()).toQuery();
+
+  return database.getSql(query).then(result => {
+    return result[0].id_count;
+  });
+};
+
 export const getNodeById = nodeId => {
   const { tableName, dbId } = tables.splitNodeId(nodeId);
   return nodeLoaders[tableName].load(dbId);
@@ -126,7 +135,9 @@ export const getPostIds = (source, args, context) => {
       pageInfo.endCursor = rows[rows.length - 1].__cursor;
     }
 
-    return { rows, pageInfo };
+    const count = 11;
+
+    return { count, rows, pageInfo };
   });
 };
 
