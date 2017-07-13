@@ -3,6 +3,8 @@ import * as tables from "./tables";
 
 import DataLoader from "dataloader";
 
+let nodeLoaders;
+
 const createNodeLoader = table => {
   return new DataLoader(ids => {
     const query = table.select(table.star()).where(table.id.in(ids)).toQuery();
@@ -16,10 +18,16 @@ const createNodeLoader = table => {
   });
 };
 
-const nodeLoaders = {
-  users: createNodeLoader(tables.users),
-  posts: createNodeLoader(tables.posts),
-  comments: createNodeLoader(tables.comments)
+export const createNodeLoaders = () => {
+  return {
+    users: createNodeLoader(tables.users),
+    posts: createNodeLoader(tables.posts),
+    comments: createNodeLoader(tables.comments)
+  };
+};
+
+export const setLoaders = () => {
+  nodeLoaders = createNodeLoaders();
 };
 
 export const getTableCount = tableName => {

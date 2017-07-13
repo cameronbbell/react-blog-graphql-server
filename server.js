@@ -138,6 +138,13 @@ app.use((req, res, next) => {
   }
 });
 
+// Use new instances of loaders per request to avoid the sharing of the
+// Dataloader's cache between requests and users
+app.use((req, res, next) => {
+  loaders.setLoaders();
+  next();
+});
+
 app.use(
   "/graphql",
   graphqlHTTP(() => {
