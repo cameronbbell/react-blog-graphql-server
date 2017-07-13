@@ -148,8 +148,6 @@ export const PostType = new GraphQLObjectType({
                 });
               });
 
-              console.log(count);
-
               return Promise.all(promises).then(edges => {
                 return {
                   count,

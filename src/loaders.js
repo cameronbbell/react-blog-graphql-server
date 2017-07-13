@@ -140,6 +140,10 @@ export const getPostIds = (source, args, context) => {
       pageInfo.endCursor = rows[rows.length - 1].__cursor;
     }
 
+    rows.sort((a, b) => {
+      return a.id - b.id;
+    });
+
     return { rows, pageInfo };
   });
 };
